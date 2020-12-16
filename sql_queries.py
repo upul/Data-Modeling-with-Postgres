@@ -16,9 +16,9 @@ time_table_drop = f"DROP TABLE IF EXISTS {TIME_TABLE};"
 
 songplay_table_create = """
 CREATE TABLE IF NOT EXISTS {} (
-    songplay_id int,
-    start_time bigint,
-    user_id int,
+    songplay_id SERIAL NOT NULL,
+    start_time bigint NOT NULL,
+    user_id int NOT NULL,
     level text,
     song_id text,
     artist_id text,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS {} (
 
 user_table_create = """
 CREATE TABLE IF NOT EXISTS {} (
-    user_id int,
+    user_id int NOT NULL,
     first_name text,
     last_name text,
     gender text,
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS {} (
 
 song_table_create = """
 CREATE TABLE IF NOT EXISTS {} (
-    song_id text,
+    song_id text NOT NULL,
     title text,
     artist_id text,
     year int,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS {} (
 
 artist_table_create = """
 CREATE TABLE IF NOT EXISTS {} (
-    artist_id text,
+    artist_id text NOT NULL,
     name text,
     location text,
     latitude text,
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS {} (
 
 time_table_create = """
 CREATE TABLE IF NOT EXISTS {} (
-    start_time bigint,
+    start_time bigint NOT NULL,
     hour int,
     day int,
     week int,
@@ -100,8 +100,8 @@ CREATE TABLE IF NOT EXISTS {} (
 # INSERT RECORDS
 
 songplay_table_insert = """
-INSERT INTO {} (songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent) 
-VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s) 
+INSERT INTO {} (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent) 
+VALUES(%s, %s, %s, %s, %s, %s, %s, %s) 
 ON CONFLICT(songplay_id) DO NOTHING;
 """.format(
     SONGS_PLAY_TABLE
@@ -110,7 +110,7 @@ ON CONFLICT(songplay_id) DO NOTHING;
 user_table_insert = """
 INSERT INTO {} (user_id, first_name, last_name, gender, level) 
 VALUES(%s, %s, %s, %s, %s)
-ON CONFLICT(user_id) DO NOTHING;
+ON CONFLICT(user_id) DO UPDATE SET level = excluded.level
 """.format(
     USERS_TABLE
 )

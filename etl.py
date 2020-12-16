@@ -4,9 +4,18 @@ import psycopg2
 import pandas as pd
 import numpy as np
 from sql_queries import *
+from typing import Union
 
 
 def _type_converter(data):
+    """This is a simple utility method we use for type conversion
+
+    Args:
+        data (Union[np.float64, np.float32, np.int64), np.int32, object)]): Data we are going to convert its type
+
+    Returns:
+        Union[int, float, object]: data converted to Python type
+    """
     if any([isinstance(data, np.float64), isinstance(data, np.float32)]):
         return float(data)
     if any([isinstance(data, np.int64), isinstance(data, np.int32)]):
@@ -15,6 +24,12 @@ def _type_converter(data):
 
 
 def process_song_file(cur, filepath):
+    """This method processes a single song file.
+
+    Args:
+        cur (psycopg2.cursor): an instance of Postgres cursor class.
+        filepath (str): full path of the song file in JSON format.
+    """
     # open song file
     df = pd.read_json(filepath, lines=True)
 
@@ -42,6 +57,12 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """This method processes a single log file.
+
+    Args:
+        cur (psycopg2.cursor): an instance of Postgres cursor class.
+        filepath (str): full path of the log file in JSON format.
+    """
     # open log file
     df = pd.read_json(filepath, lines=True)
 
@@ -74,7 +95,7 @@ def process_log_file(cur, filepath):
         cur.execute(user_table_insert, row)
 
     # insert songplay records
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
 
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
@@ -87,7 +108,6 @@ def process_log_file(cur, filepath):
 
         # insert songplay record
         songplay_data = (
-            index,
             row.ts,
             int(row.userId),
             row.level,
@@ -101,6 +121,14 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """This is a generic function we can use to process either song file or log file
+
+    Args:
+        cur (cursor): an instance of Postgres cursor class.
+        conn (connection): an instance of Postgres connection class.
+        filepath (str): the folder containing your log or user data
+        func (object): this could be either process_song_file or process_log_file
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
