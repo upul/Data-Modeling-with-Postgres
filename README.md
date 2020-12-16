@@ -33,11 +33,11 @@ We are going to run a lot of analytical queries against our data stored in the d
 ## Some Analytical Queries We are Expected to Run Against Our Database
 
 ### Categorize Users Based on Their Tiers
-<p align="center">
+<p align="left">
   <img src="./images/num_users_per_tier.png">
 </p>
 
 ### Five Most Active App Users 
-<p align="center">
+<p align="left">
   <img src="./images/active_users.png">
 </p>
